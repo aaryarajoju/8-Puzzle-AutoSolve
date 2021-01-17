@@ -1,0 +1,7 @@
+# ignoring idea config files
+
+workspace.xml
+tasks.xml
+
+*.iml
+modules.xml

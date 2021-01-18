@@ -14,26 +14,56 @@ func main() {
 
 	startTime := time.Now()
 
+init:
+
 	puzzle := [3][3]int{}
 	puzzle = initBoard(puzzle)
+
+	if !isBoardSolvable(puzzle) {
+		goto init
+	}
 
 	boardTimeTaken := time.Since(startTime)
 	fmt.Println("Time taken to generate the board:", boardTimeTaken)
 
 	originalBoard := puzzle
 
+	solveTimeStart := time.Now()
+
 start:
 	fmt.Print("\n\n")
 	printBoard(puzzle)
 
-	solveBoard(puzzle)
+	puzzle = solveBoard(puzzle)
 
 	if !isBoardFinished(puzzle) {
 		goto start
 	}
 
-	totalTimeTaken = time.Since(startTime)
+	totalTimeTaken = time.Since(solveTimeStart)
 	boardFinished(puzzle, originalBoard)
+	fmt.Print("\n\n")
+}
+
+/* TODO- complete this function to solve the board */
+func solveBoard(board [3][3]int) [3][3]int {
+
+	newBoard := board
+
+	positionGapI, positionGapJ := findGap(newBoard)
+	fmt.Println("Gap is at:", positionGapI, positionGapJ)
+
+	// TODO- steps to solve the board:
+	//* bring 1 to it's position
+	//* bring 3 to 2's place or 2 to 3's place
+	//* bring 2 right below 3 or 3 right below 2
+	//* rotate the pieces so that 2 and 3 are in the right position
+	//* bring 7 to 4's place
+	//* bring 4 to 5's place
+	//* rotate anti-clockwise, so that 4 and 7 are in their right positions
+	//* rotate the remaining 3 numbers, till the board is complete
+
+	return newBoard
 }
 
 func isAlreadyPresent(board [3][3]int, x int) bool {
@@ -121,27 +151,6 @@ returning:
 	return positionI, positionJ
 }
 
-/* TODO- complete this function to solve the board */
-func solveBoard(board [3][3]int) [3][3]int {
-
-	newBoard := board
-
-	positionGapI, positionGapJ := findGap(newBoard)
-	fmt.Println("Gap is at:", positionGapI, positionGapJ)
-
-	// TODO- steps to solve the board:
-	//* bring 1 to it's position
-	//* bring 3 to 2's place or 2 to 3's place
-	//* bring 2 right below 3 or 3 right below 2
-	//* rotate the pieces so that 2 and 3 are in the right position
-	//* bring 7 to 4's place
-	//* bring 4 to 5's place
-	//* rotate anti-clockwise, so that 4 and 7 are in their right positions
-	//* rotate the remaining 3 numbers, till the board is complete
-
-	return newBoard
-}
-
 func boardFinished(board [3][3]int, originalBoard [3][3]int) {
 	fmt.Println("\n\nThe board is solved.")
 	fmt.Println("It took and", totalTimeTaken, "and", stepCounter, "steps to solve")
@@ -149,4 +158,33 @@ func boardFinished(board [3][3]int, originalBoard [3][3]int) {
 	printBoard(originalBoard)
 	fmt.Println("\nThe final board is: ")
 	printBoard(board)
+}
+
+func isBoardSolvable(board [3][3]int) bool {
+
+	var arr [8]int
+	var numOfInversions int
+
+	for a, i := 0, 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			if board[i][j] != 9 {
+				arr[a] = board[i][j]
+				a++
+			}
+		}
+	}
+
+	for first := 0; first < len(arr); first++ {
+		for second := first + 1; second < len(arr); second++ {
+			if arr[second] < arr[first] {
+				numOfInversions++
+			}
+		}
+	}
+
+	if numOfInversions%2 == 0 {
+		return true
+	}
+
+	return false
 }

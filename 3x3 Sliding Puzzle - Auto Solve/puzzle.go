@@ -3,12 +3,16 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
+	"os/exec"
 	"strconv"
 	"time"
 )
 
 var stepCounter int
 var totalTimeTaken time.Duration
+
+// const finishedBoard [3][3]int = [[1,2,3],[4,5,6],[7,8,9]]	
 
 func main() {
 
@@ -35,6 +39,10 @@ start:
 	printBoard(puzzle)
 
 	puzzle = solveBoard(puzzle)
+
+	cmd := exec.Command("cmd", "/c", "cls")
+	cmd.Stdout = os.Stdout
+	_ = cmd.Run()
 
 	if !isBoardFinished(puzzle) {
 		goto start
